@@ -1,3 +1,11 @@
+const { fileURLToPath } = require("url");
+const { dirname } = require("path");
+const { FlatCompat } = require("@eslint/eslintrc");
+const pluginJs = require("@eslint/js");
+
+const __filename = fileURLToPath(__dirname);
+const __dirname = dirname(__filename);
+
 module.exports = {
     env: {
         node: true,
@@ -16,6 +24,7 @@ module.exports = {
         },
     },
     rules: {
+        "node/no-unsupported-features/es-syntax": "off",
         "rest-spread-spacing": ["error", "never"],
         "no-console":
             process.env.MODE === "development"
@@ -44,3 +53,15 @@ module.exports = {
         camelcase: ["error", { properties: "always" }],
     },
 };
+
+const compat = new FlatCompat({
+    baseDirectory: __dirname,
+    recommendedConfig: pluginJs.configs.recommended,
+});
+
+module.exports = [
+    {
+        ...module.exports,
+        ...compat.extends("standard"),
+    },
+];
